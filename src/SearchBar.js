@@ -3,6 +3,8 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 
 let snippet = "loading"
 const wikipediaEndpoint= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=Craig%20Cash&format=json";
+const userWikipediaEndpointA= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=";
+const userWikipediaEndpointB= "&format=json";
 
 
     const getData = async () => {
@@ -27,7 +29,9 @@ export class SearchBar extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            retrievedData: null
+            retrievedData: null,
+            userInput: "Enter here...",
+            userInputEncoded: ""
         }
     }
 
@@ -44,10 +48,51 @@ export class SearchBar extends React.Component {
         console.log(this.state.retrievedData.title)
     }
 
+     handleClick = () => {
+        console.log(this.state.userInputEncoded);
+        const url=(this.state.userInputEncoded);
+
+        let awaitedResult;
+
+        fetch(url).then(response => {
+            return response.json();
+        }).then(result => {
+            awaitedResult = result.query.search[0];
+            console.log(awaitedResult);
+            this.setState({
+                retrievedData: awaitedResult,
+                loading: false
+            })
+        })
+
+    }
+
+        /*const response = fetch(url);
+        const data= response.json();
+        const dataObject = data.query.search[1];
+        
+        
+        this.setState({
+            retrievedData : dataObject,
+            loading: false
+        }) */
+
+
+    handleChange = e => {
+        const newValue = e.target.value;
+        const newValueEncoded = (`${userWikipediaEndpointA}${encodeURIComponent(newValue)}${userWikipediaEndpointB}`)
+        this.setState({
+            userInput : newValue,
+            userInputEncoded : newValueEncoded
+        });
+        console.log(this.state.userInputEncoded)
+    }
+
     render () {
         return (
             <div>
-            <input type="text"></input>
+            <input type="text" value={this.state.userInput} onChange={this.handleChange}></input>
+            <button onClick={this.handleClick}>Submit</button>
             {this.state.loading ? <p>currently Loading</p> : 
             <div>
             <p>not loading</p>
