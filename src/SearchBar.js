@@ -3,24 +3,9 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 
 let snippet = "loading"
 const wikipediaEndpoint= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=Craig%20Cash&format=json";
+const newEndpoint= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts";
 const userWikipediaEndpointA= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=";
 const userWikipediaEndpointB= "&format=json";
-
-
-    const getData = async () => {
-        fetch (wikipediaEndpoint).then(response => {
-            if (response.ok){
-                return response.json();
-            } 
-            throw new Error('Request failed!');
-         },networkError => console.log(networkError.message))
-         .then(jsonResponse => {
-             console.log(jsonResponse.query.search[0].snippet)
-             snippet = (jsonResponse.query.search[0].snippet)
-             console.log('Snippet is: '+snippet)
-         })
-    }
-
 
 
 export class SearchBar extends React.Component {
@@ -30,13 +15,15 @@ export class SearchBar extends React.Component {
         this.state = {
             loading: true,
             retrievedData: null,
-            userInput: "Enter here...",
+            userInput: "",
             userInputEncoded: ""
         }
     }
 
     async componentDidMount(){
         const url=wikipediaEndpoint;
+
+        try {
         const response=await fetch(url);
         const data=await response.json();
         const dataObject = data.query.search[1];
@@ -44,8 +31,9 @@ export class SearchBar extends React.Component {
             retrievedData: dataObject,
             loading: false
         })
-        console.log(this.state.retrievedData)
-        console.log(this.state.retrievedData.title)
+    } catch (e){
+        throw new Error(e)
+    }
     }
 
      handleClick = () => {
@@ -53,29 +41,22 @@ export class SearchBar extends React.Component {
         const url=(this.state.userInputEncoded);
 
         let awaitedResult;
-
+        this.setState({
+            loading: true
+        })
         fetch(url).then(response => {
             return response.json();
         }).then(result => {
             awaitedResult = result.query.search[0];
-            console.log(awaitedResult);
             this.setState({
-                retrievedData: awaitedResult,
-                loading: false
-            })
+            retrievedData: awaitedResult,
+            loading: false
+        })
         })
 
     }
 
-        /*const response = fetch(url);
-        const data= response.json();
-        const dataObject = data.query.search[1];
-        
-        
-        this.setState({
-            retrievedData : dataObject,
-            loading: false
-        }) */
+
 
 
     handleChange = e => {
@@ -85,7 +66,6 @@ export class SearchBar extends React.Component {
             userInput : newValue,
             userInputEncoded : newValueEncoded
         });
-        console.log(this.state.userInputEncoded)
     }
 
     render () {

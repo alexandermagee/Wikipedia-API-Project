@@ -23,3 +23,29 @@ const getData = async () => {
     .then(contents => console.log(contents))
     .catch(() => console.log("Can’t access " + url + " response. Blocked by browser?"))
 } */
+
+        /*const response = fetch(url);
+        const data= response.json();
+        const dataObject = data.query.search[1];
+        
+        
+        this.setState({
+            retrievedData : dataObject,
+            loading: false
+        }) */
+
+ /*       const getData = async () => {
+            fetch (wikipediaEndpoint).then(response => {
+                if (response.ok){
+                    return response.json();
+                } 
+                throw new Error('Request failed!');
+             },networkError => console.log(networkError.message))
+             .then(jsonResponse => {
+                 console.log(jsonResponse.query.search[0].snippet)
+                 snippet = (jsonResponse.query.search[0].snippet)
+                 console.log('Snippet is: '+snippet)
+             })
+        }       */
+
+        
