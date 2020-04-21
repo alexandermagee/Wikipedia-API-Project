@@ -8,22 +8,25 @@ const userWikipediaEndpointA= "https://cors-anywhere.herokuapp.com/https://en.wi
 const userWikipediaEndpointB= "&format=json";
 
 
-export class SearchBar extends React.Component {
+export class SearchBar2 extends React.Component {
 
     constructor(props){
         super(props);
         this.state = {
             loading: true,
             retrievedData: null,
+            retrievedDataArray: "",
             userInput: "",
-            userInputEncoded: ""
+            userInputEncoded: "",
+            titleList: "",
+            snippetList: ""
         }
     }
 
     async componentDidMount(){
         const url=wikipediaEndpoint;
 
-      /*  try {
+    /*  try {
             const response=await fetch(newEndpoint);
             const data=await response.json();
             console.log(data);
@@ -31,18 +34,37 @@ export class SearchBar extends React.Component {
             throw new Error(e)
         } */
 
-      try {
+     try {
         const response=await fetch(url);
         const data=await response.json();
+
+        
+
+        const dataArray = data.query.search;
+        console.log(dataArray[2]["title"]);
+        let collectedTitles = [];
+        let collectedSnippets = [];
+        for(let i=0;i<dataArray.length;i++){
+            let title = dataArray[i]["title"];
+            let snippet = dataArray[i]["snippet"]; 
+            collectedTitles.push(title);
+            collectedSnippets.push(snippet);
+        }
+        /*console.log("Updated array object :" +extractedDataArray); */
+        
+        
         const dataObject = data.query.search[0];
-        console.log(dataObject);
         this.setState({
             retrievedData: dataObject,
+            titleList: collectedTitles,
+            snippetList: collectedSnippets,
             loading: false
         })
     } catch (e){
         throw new Error(e)
     } 
+    console.log("Updated state : " +this.state.retrievedDataArray[0[0]])
+    console.log(this.state)
     }
 
      handleClick = () => {
@@ -85,8 +107,17 @@ export class SearchBar extends React.Component {
             {this.state.loading ? <p>currently Loading</p> : 
             <div>
             <p>not loading</p>
-            <p>{this.state.retrievedData.title}</p>
-            <div>...{ ReactHtmlParser(this.state.retrievedData.snippet)}...</div>
+            {/*<p>{this.state.retrievedData.title}</p>
+            <div>...{ ReactHtmlParser(this.state.retrievedData.snippet)}...</div> */}
+            <ol>
+              {this.state.titleList.map(title => {
+                  return <li>{title}</li>
+              })}  
+              {this.state.snippetList.map(snippet => {
+                  return <li>{ReactHtmlParser(snippet)}</li>
+              })}  
+            </ol>
+
             </div>
             }
             </div>
