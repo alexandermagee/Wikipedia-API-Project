@@ -90,6 +90,7 @@ export class SearchBar2 extends React.Component {
 
 
 
+
     handleChange = e => {
         const newValue = e.target.value;
         const newValueEncoded = (`${userWikipediaEndpointA}${encodeURIComponent(newValue)}${userWikipediaEndpointB}`)
@@ -107,14 +108,15 @@ export class SearchBar2 extends React.Component {
             {this.state.loading ? <p>currently Loading</p> : 
             <div>
             <p>not loading</p>
-            {/*<p>{this.state.retrievedData.title}</p>
-            <div>...{ ReactHtmlParser(this.state.retrievedData.snippet)}...</div> */}
             <ol>
-              {this.state.titleList.map(title => {
-                  return <li>{title}</li>
-              })}  
-              {this.state.snippetList.map(snippet => {
-                  return <li>{ReactHtmlParser(snippet)}</li>
+              {this.state.titleList.map((title,i) => {
+                  let desc = this.state.snippetList[i];
+                  return (
+                  <div>  
+                  <li>{title}</li>
+                  <span>...{ReactHtmlParser(desc)}...</span>
+                  </div>
+                  )
               })}  
             </ol>
 
