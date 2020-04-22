@@ -26,22 +26,11 @@ export class SearchBar2 extends React.Component {
     async componentDidMount(){
         const url=wikipediaEndpoint;
 
-    /*  try {
-            const response=await fetch(newEndpoint);
-            const data=await response.json();
-            console.log(data);
-        } catch(e) {
-            throw new Error(e)
-        } */
-
      try {
         const response=await fetch(url);
-        const data=await response.json();
-
-        
+        const data=await response.json();       
 
         const dataArray = data.query.search;
-        console.log(dataArray[2]["title"]);
         let collectedTitles = [];
         let collectedSnippets = [];
         for(let i=0;i<dataArray.length;i++){
@@ -49,13 +38,9 @@ export class SearchBar2 extends React.Component {
             let snippet = dataArray[i]["snippet"]; 
             collectedTitles.push(title);
             collectedSnippets.push(snippet);
-        }
-        /*console.log("Updated array object :" +extractedDataArray); */
+        }       
         
-        
-        const dataObject = data.query.search[0];
         this.setState({
-            retrievedData: dataObject,
             titleList: collectedTitles,
             snippetList: collectedSnippets,
             loading: false
@@ -63,8 +48,6 @@ export class SearchBar2 extends React.Component {
     } catch (e){
         throw new Error(e)
     } 
-    console.log("Updated state : " +this.state.retrievedDataArray[0[0]])
-    console.log(this.state)
     }
 
      handleClick = () => {
@@ -78,18 +61,24 @@ export class SearchBar2 extends React.Component {
         fetch(url).then(response => {
             return response.json();
         }).then(result => {
-            awaitedResult = result.query.search[0];
-            this.setState({
-            retrievedData: awaitedResult,
+            const dataArray = result.query.search;
+        let collectedTitles = [];
+        let collectedSnippets = [];
+        for(let i=0;i<dataArray.length;i++){
+            let title = dataArray[i]["title"];
+            let snippet = dataArray[i]["snippet"]; 
+            collectedTitles.push(title);
+            collectedSnippets.push(snippet);
+        }       
+        
+        this.setState({
+            titleList: collectedTitles,
+            snippetList: collectedSnippets,
             loading: false
         })
         })
 
     }
-
-
-
-
 
     handleChange = e => {
         const newValue = e.target.value;
@@ -103,17 +92,22 @@ export class SearchBar2 extends React.Component {
     render () {
         return (
             <div>
-            <input type="text" value={this.state.userInput} onChange={this.handleChange}></input>
+            <input type="text" value={this.state.userInput} onChange={this.handleChange} placeholder="Enter here..."></input>
             <button onClick={this.handleClick}>Submit</button>
-            {this.state.loading ? <p>currently Loading</p> : 
+            {this.state.loading ? <p>Currently loading...</p> : 
             <div>
-            <p>not loading</p>
+            <p>Top Wikipedia Results:</p>
             <ol>
               {this.state.titleList.map((title,i) => {
                   let desc = this.state.snippetList[i];
+                  let hyperlink = (`https://en.wikipedia.org/wiki/${title.split(" ").join("_")}`)
                   return (
-                  <div>  
-                  <li>{title}</li>
+                  <div>
+                    <a href={hyperlink} target="_blank">
+                        <li key={i}>
+                        <strong>{title}</strong>
+                        </li>
+                    </a>
                   <span>...{ReactHtmlParser(desc)}...</span>
                   </div>
                   )
