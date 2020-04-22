@@ -2,7 +2,7 @@ import React from 'react';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 let snippet = "loading"
-const wikipediaEndpoint= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=Craig%20Cash&format=json";
+const wikipediaEndpoint= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=JS%React&format=json";
 const newEndpoint= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts";
 const userWikipediaEndpointA= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=";
 const userWikipediaEndpointB= "&format=json";
@@ -17,7 +17,7 @@ export class SearchBar2 extends React.Component {
             retrievedData: null,
             retrievedDataArray: "",
             userInput: "",
-            userInputEncoded: "",
+            userInputEncoded: "",g
             titleList: "",
             snippetList: ""
         }
@@ -74,10 +74,17 @@ export class SearchBar2 extends React.Component {
         this.setState({
             titleList: collectedTitles,
             snippetList: collectedSnippets,
-            loading: false
+            loading: false,
+            userInput: ""
         })
         })
 
+    }
+
+    handleKeyPress = e => {
+        if (e.key === "Enter"){
+            this.handleClick()
+        }
     }
 
     handleChange = e => {
@@ -92,7 +99,7 @@ export class SearchBar2 extends React.Component {
     render () {
         return (
             <div>
-            <input type="text" value={this.state.userInput} onChange={this.handleChange} placeholder="Enter here..."></input>
+            <input type="text" value={this.state.userInput} onChange={this.handleChange} onKeyPress={this.handleKeyPress} placeholder="Enter here..."></input>
             <button onClick={this.handleClick}>Submit</button>
             {this.state.loading ? <p>Currently loading...</p> : 
             <div>
