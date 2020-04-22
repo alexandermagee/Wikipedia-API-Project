@@ -1,19 +1,14 @@
 import React from 'react';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import {SearchBar3} from './SearchBar3';
+import {DisplayResults} from './DisplayResults';
 
-const wikipediaEndpoint= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=JS%React&format=json";
-const userWikipediaEndpointA= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=";
-const userWikipediaEndpointB= "&format=json";
-
-
-export class SearchBar2 extends React.Component {
+export class AppContainer extends React.Component {
 
     constructor(props){
         super(props);
         this.state = {
             loading: true,
-            retrievedData: null,
-            retrievedDataArray: "",
             userInput: "",
             userInputEncoded: "",
             titleList: "",
@@ -22,7 +17,7 @@ export class SearchBar2 extends React.Component {
     }
 
     async componentDidMount(){
-        const url=wikipediaEndpoint;
+        const url= "https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=JS%React&format=json";
 
      try {
         const response=await fetch(url);
@@ -48,8 +43,7 @@ export class SearchBar2 extends React.Component {
     } 
     }
 
-     handleClick = () => {
-        console.log(this.state.userInputEncoded);
+    generateNewResults = () => {
         const url=(this.state.userInputEncoded);
 
         this.setState({
@@ -84,42 +78,24 @@ export class SearchBar2 extends React.Component {
         }
     }
 
-    handleChange = e => {
-        const newValue = e.target.value;
-        const newValueEncoded = (`${userWikipediaEndpointA}${encodeURIComponent(newValue)}${userWikipediaEndpointB}`)
+    updateSearchTerm = (newSearch,newSearchEncoded) => {
         this.setState({
-            userInput : newValue,
-            userInputEncoded : newValueEncoded
+            userInput : newSearch,
+            userInputEncoded : newSearchEncoded
         });
     }
 
     render () {
         return (
             <div>
-            <input type="text" value={this.state.userInput} onChange={this.handleChange} onKeyPress={this.handleKeyPress} placeholder="Enter here..."></input>
-            <button onClick={this.handleClick}>Submit</button>
-            {this.state.loading ? <p>Currently loading...</p> : 
-            <div>
-            <p>Top Wikipedia Results:</p>
-            <ol>
-              {this.state.titleList.map((title,i) => {
-                  let desc = this.state.snippetList[i];
-                  let hyperlink = (`https://en.wikipedia.org/wiki/${title.split(" ").join("_")}`)
-                  return (
-                  <div>
-                    <a href={hyperlink} target="_blank">
-                        <li key={i}>
-                        <strong>{title}</strong>
-                        </li>
-                    </a>
-                  <span>...{ReactHtmlParser(desc)}...</span>
-                  </div>
-                  )
-              })}  
-            </ol>
-
-            </div>
-            }
+            <SearchBar3 userInput={this.state.userInput} 
+            generateNewResults={this.generateNewResults}
+            updateSearchTerm={this.updateSearchTerm} 
+            />
+            <DisplayResults loading={this.state.loading} 
+            snippetList={this.state.snippetList} 
+            titleList={this.state.titleList}
+            />
             </div>
         )
     }
